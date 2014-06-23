@@ -8,18 +8,16 @@ set -eu -o pipefail
 alias safe_mode='set -eu -o pipefail'
 shopt -s expand_aliases
 
+if [[ -n "${DEBUG-}" ]]
+then
+	set -x
+	alias safe_mode='set -exu -o pipefail'
+fi
 
-GO_VERSION=1.3
-GO_INSTALL_DIR="/usr/local"
-GO_INSTALLER_SHA1="b6b154933039987056ac307e20c25fa508a06ba6"
-
-GO_INSTALLER_NAME="go$GO_VERSION.linux-amd64.tar.gz"
-GO_DOWNLOAD_LOC="http://golang.org/dl/$GO_INSTALLER_NAME"
 
 # No password prompts
 alias sudo="sudo -n"
 alias aptitude="sudo aptitude --assume-yes"
-alias go="$GOROOT/bin/go"
 
 function log_msg {
 	safe_mode
@@ -92,19 +90,6 @@ function ensure_cmd {
 	return 1
 }
 
-function upload_and_run_script {
-	safe_mode
-	[[ "$#" -eq 2 ]] || echoandexit "upload_and_run_script requires 2 args"
-	local filename="$1"
-	local host="$2"
-	[[ -f "$filename" ]] || echoandexit "upload_and_run_script: $filename does not exist"
-	# For now dependencies are easy: utils.sh is the only one for any script
-	local dependencies="utils.sh"
-	ensure_cmd scp openssh-client
-	scp $dependencies "$filename" "$host":
-	ssh "$host" "./$filename"
-}
-
 function check_sha1 {
 	safe_mode
 	[[ "$#" -eq 2 ]] || echoandexit "check_sha1 requires 2 args"
@@ -118,29 +103,4 @@ function install_awscli {
 	safe_mode
 	ensure_cmd pip python-pip
 	sudo pip install awscli
-}
-
-function download_go {
-	safe_mode
-	wget --no-verbose "$GO_DOWNLOAD_LOC"
-	check_sha1 "$GO_INSTALLER_NAME" "$GO_INSTALLER_SHA1"
-}
-
-function install_golang {
-	safe_mode
-	local d="$(mktemp -d -t "install-go$GO_VERSION-XXXXXXX")"
-	cd "$d"
-	download_go
-	sudo tar xz -C "$GO_INSTALL_DIR" "$GO_INSTALLER_NAME"
-	cd /
-	rm -rf "$d"
-}
-
-function has_go {
-	safe_mode
-	has_cmd_raw go || return 1
-	go version | grep --quiet -F "go$GO_VERSION" || return 1
-	# safe_mode makes these crash the script if unset
-	[[ "$GOROOT" ]]
-	[[ "$GOPATH" ]]
 }
