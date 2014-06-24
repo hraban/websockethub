@@ -1,0 +1,14 @@
+service forward-80-to-8181
+{
+ disable = no
+ type = UNLISTED
+ socket_type = stream
+ protocol = tcp
+ wait = no
+ redirect = 127.0.0.1 8181
+ bind = 0.0.0.0
+ port = 80
+ user = nobody
+ per_source = 4
+}
+

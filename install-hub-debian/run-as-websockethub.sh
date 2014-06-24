@@ -5,7 +5,7 @@ set -eu -o pipefail
 
 source utils.sh
 
-HUBARGS="-l 0.0.0.0:8181 -p $RANDOM$RANDOM$RANDOM$RANDOM -v"
+HUBARGS="-l localhost:8181 -v"
 
 log_msg "Downloading and installing websockethub software."
 go get -u github.com/nobullshitsoftware/websockethub/hub

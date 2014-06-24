@@ -26,6 +26,8 @@ function install_golang {
 		sudo tar xzf "$GO_INSTALLER_NAME" -C "$GO_INSTALL_DIR")
 	rm -rf "$d"
 	sudo install -o root -g root -m 755 goenv.sh /etc/profile.d/
+	ensure_cmd hg mercurial
+	ensure_cmd git git
 	source /etc/profile.d/goenv.sh
 }
 
