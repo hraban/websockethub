@@ -22,7 +22,7 @@ function publish_to_s3 {
 # Prepare contents
 
 d="$(mktemp -d -t websockethub.com-static-XXXXXXXXX)"
-RELEASE_BRANCH=master
+RELEASE_BRANCH=origin/master
 ensure_cmd git git
 git archive --format=tar "$RELEASE_BRANCH" | tar x -C "$d"
 cd "$d"
