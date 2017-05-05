@@ -1,0 +1,154 @@
+<!doctype html>
+<!--
+Websockethub. Easy chatrooms for your website.
+Copyright © 2014-2017 Websockethub authors (see AUTHORS file)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<html>
+
+<head>
+
+  <meta charset=utf-8>
+  <title>Chatroom widget for your website - websockethub.com</title>
+  <link rel="canonical" href="http://www.websockethub.com/">
+  <link href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAElBMVEUAAAD///+UlJTg3t7t7e1cXFyt6lCgAAAAAXRSTlMAQObYZgAAAEpJREFUCNdjQAAWJSBwADKcDAUFhVWAAsqCQGDkwMAEFAAKKTAwCYIBiBEqGhiKxICrgeuCmQM2WVEYaDIIKAIlwEBZBWotSAIBADZ2Cpt3RvDMAAAAAElFTkSuQmCC" rel="icon" type="image/png" />
+
+  <link rel=stylesheet type="text/css" href="base.css">
+</head>
+
+<body>
+
+<div id=bodycontainer>
+
+  <p class=pretitle><a href="http://websockethub.com/">Websockethub.com</a>
+  <h1>Painless chatroom widgets on your website</h1>
+
+  <p>Welcome to websockethub.com. Try out the groupchat, here on the right
+  (click on it).
+
+  <p>As a webmaster, to include a chatroom widget in your own page, put this in
+  your HTML:
+
+  <pre class=htmlsrc><span class="Identifier">&lt;</span><span class="Statement">script</span><span class="Identifier"> </span><span class="Type">src</span><span class="Identifier">=</span><span class="Constant">&quot;<a class=Constant href="https://static.websockethub.com/chatroomwidget.js">https://static.websockethub.com/chatroomwidget.js</a>&quot;</span><span class="Identifier">&gt;</span><span class="Identifier">&lt;</span><span class="Statement">/script</span><span class="Identifier">&gt;</span></pre>
+
+  <p>
+  As a visitor, to spawn a groupchat where there is none, use this bookmarklet:
+  <a href="javascript:document.head.appendChild((function () { var s = document.createElement('script'); s.src = 'https://static.websockethub.com/chatroombookmarklet.js'; return s;}) ()); void (0) " >websockethub</a>.
+  Note: does not work on secure (SSL/TLS) websites (yet)!
+  </p>
+
+  <div class="collapsable-section collapsed">
+
+    <h1 class=always-show>More about the bookmarklet</h1>
+
+    <h2>Firefox with bookmarks toolbar</h2>
+
+    <p>Do you have the bookmarks toolbar enabled? It's a list of buttons with
+    your bookmarks, just below the address bar, and it looks like this:
+
+    <p><img src=firefox-bookmarks-toolbar.png alt="screenshot of firefox bookmarks toolbar">
+
+    <p>Yes? Then just drag this link somewhere in there:
+    <a href="javascript:document.head.appendChild((function () { var s = document.createElement('script'); s.src = 'https://static.websockethub.com/chatroombookmarklet.js'; return s;}) ()); void (0) " >websockethub</a>.
+    Now, on any website, click on that button to join the chatroom.
+
+    <h2>Firefox without bookmarks toolbar</h2>
+
+    <p>Hold down CTRL and press B. Drag this link into that thing on the left:
+    <a href="javascript:document.head.appendChild((function () { var s = document.createElement('script'); s.src = 'https://static.websockethub.com/chatroombookmarklet.js'; return s;}) ()); void (0) " >websockethub</a>.
+    Press CTRL + B again to close it. Now, on any website, open the thing and
+    click the link. Bam!  Chatroom.
+
+    <p>PS: what is a good word for “that thing on the left”?
+
+    <h2>Chrome</h2>
+
+    <p>Press CTRL + SHIFT + B to enable the bookmarks toolbar, if it wasn't
+    visible already. Drag this link into it:
+    <a href="javascript:document.head.appendChild((function () { var s = document.createElement('script'); s.src = 'https://static.websockethub.com/chatroombookmarklet.js'; return s;}) ()); void (0) " >websockethub</a>.
+    On any website, click that bookmark button to join the chatroom.
+
+  </div>
+
+  <div class="collapsable-section collapsed">
+
+    <h1 class=always-show>Technical details</h1>
+
+    <p class="footer">If you just want a chatroom widget on your site, don't
+    worry about this.
+
+    <p>The groupchat widget requires two things: a javascript file that builds
+    it client-side, and a chatroom server for the communication. Websockethub.com
+    provides both. The server is a simple hub, which echoes all incoming data to
+    every other connected client. It works like an ethernet hub, hence the name.
+
+    <p>Hubs are accessible at
+    <tt class=htmlsrc><span class=Constant>ws://hub.websockethub.com/hub?room=<strong>roomname</strong></span></tt>
+    (no SSL, yet). A name can be anything, but if it starts with http(s):// it
+    will be listed in the public list of rooms.
+
+    <p>The javascript hosting is easy (static file on S3) so we are confident
+    that uptime will be good. The chatroom itself, not so much: it's a go server
+    on a dedicated digitalocean droplet. Everything is kept in RAM. If it
+    crashes, it will reboot, losing all chatrooms and associated backlog. Not
+    acceptable for your demo? Download the code on github.com and host a service
+    on your own server. Configure that chatroom widget by setting this variable
+    <strong>before</strong> you include the script:
+
+    <pre class=htmlsrc><span class="Identifier">&lt;</span><span class="Statement">script</span><span class="Identifier">&gt;</span>
+<span class="Identifier">var</span><span class="Special"> websockethub_chatroom_config = </span><span class="Identifier">{</span>
+<span class="Special">    </span><span class="Comment">// hostname of the websockethub server (default</span>
+<span class="Special">    </span><span class="Comment">// &quot;hub.websockethub.com&quot;)</span>
+<span class="Special">    websockethost: </span><span class="Constant">&quot;hub.somethingsomethingdarkside.com&quot;</span><span class="Special">,</span>
+<span class="Special">    </span><span class="Comment">// Name of the chatroom (default is current document</span>
+<span class="Special">    </span><span class="Comment">// location, without query string)</span>
+<span class="Special">    room: </span><span class="Constant">&quot;myroom&quot;</span><span class="Special">,</span>
+<span class="Special">    </span><span class="Comment">// path of the hub on the server (default &quot;/hub&quot;)</span>
+<span class="Special">    websocketpath: </span><span class="Constant">&quot;/hub&quot;</span><span class="Special">,</span>
+<span class="Identifier">}</span><span class="Special">;</span>
+<span class="Identifier">&lt;/</span><span class="Statement">script</span><span class="Identifier">&gt;</span></pre>
+
+  </div>
+
+  <p>Source code is available at <a href="https://github.com/hraban/websockethub">https://github.com/hraban/websockethub</a>.
+
+  <h1>Authors</h1>
+
+  <p>Websockethub.com was built by Hraban for release under the <a
+  href="http://www.nobullshitsoftware.com/">nobullshitsoftware.com</a>
+  umbrella. Feel free to drop us a line with your comments, or talk to us in
+  the chatbox right here on this page. Enjoy!
+
+  <p>Hraban Luyat &lt;hraban@0brg.net&gt;<br>
+  <br>
+  2014
+
+  <!-- at the end to float on top, and to not look ugly in SE results -->
+  <noscript>
+    <p class=nojswarning>The demo on this site requires JavaScript!</p>
+  </noscript>
+
+</div>
+
+<script src="base.js"></script>
+
+<!-- Per-deploy customization that is not part of source control -->
+<script src="deploy-local.js"></script>
+
+<script>window.dontLoadDefaultChatroomwidgetScript
+        || document.write('<script src="//static.websockethub.com/chatroomwidget.js"><\/script>')</script>
+
+</body>
+</html>
